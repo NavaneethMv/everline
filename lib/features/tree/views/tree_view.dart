@@ -47,7 +47,6 @@ class _TreeViewState extends State<TreeView> {
   }
 
   void _addMember() {
-    // Add new member at center of current view
     setState(() {
       familyMembers.add(
         FamilyMember(
@@ -68,7 +67,6 @@ class _TreeViewState extends State<TreeView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Main interactive viewer with grid and family members
         InteractiveViewer(
           transformationController: _transformationController,
           boundaryMargin: const EdgeInsets.all(5000),
@@ -141,17 +139,15 @@ class _TreeViewState extends State<TreeView> {
   }
 }
 
-// Grid Background Painter (scales infinitely)
 class GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
+      ..color = Colors.grey.withValues(alpha: 0.2)
       ..strokeWidth = 1;
 
     const gridSize = 50.0;
 
-    // Extend grid beyond visible area for zooming out
     const extension = 5000.0;
     final extendedWidth = size.width + extension * 2;
     final extendedHeight = size.height + extension * 2;
@@ -171,7 +167,6 @@ class GridPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// Connection Lines Painter (for relationships)
 class ConnectionPainter extends CustomPainter {
   final List<FamilyMember> members;
 
@@ -180,12 +175,10 @@ class ConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.5)
+      ..color = Colors.blue.withValues(alpha: 0.5)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
-    // Example: Draw line from first to second member
-    // You can customize this based on relationships
     if (members.length > 1) {
       for (int i = 0; i < members.length - 1; i++) {
         final start = Offset(
@@ -205,7 +198,6 @@ class ConnectionPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
 
-// Family Member Card Widget
 class FamilyMemberCard extends StatelessWidget {
   final FamilyMember member;
   final bool isDragging;
