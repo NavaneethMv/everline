@@ -6,6 +6,7 @@ class CustomCard extends StatelessWidget {
   final String value;
   final String? subtitle;
   final IconData icon;
+  final VoidCallback? onTap;
 
   const CustomCard({
     super.key,
@@ -13,43 +14,52 @@ class CustomCard extends StatelessWidget {
     required this.value,
     this.subtitle,
     required this.icon,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ShadCard(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.bodyMedium),
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
-        ],
-      ),
-
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: onTap,
+      child: ShadCard(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              value,
+              title,
               style: Theme.of(
                 context,
-              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 4),
-            subtitle != null
-                ? Text(
-                    subtitle!,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                : SizedBox.shrink(),
+            Icon(icon, color: Theme.of(context).colorScheme.primary),
           ],
+        ),
+
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4),
+              subtitle != null
+                  ? Text(
+                      subtitle!,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
         ),
       ),
     );
