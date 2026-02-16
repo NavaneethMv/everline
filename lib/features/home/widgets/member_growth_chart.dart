@@ -23,7 +23,12 @@ class MemberGrowthChart extends StatelessWidget {
     final optimizedMaxY = maxY == 0 ? 5.0 : maxY * 1.2;
 
     return ShadCard(
-      title: Text('Usage Trend', style: Theme.of(context).textTheme.bodyMedium),
+      title: Text(
+        'Usage Trend',
+        style: Theme.of(
+          context,
+        ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+      ),
       child: AspectRatio(
         aspectRatio: 1.70,
         child: Padding(
