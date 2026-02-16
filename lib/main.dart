@@ -1,6 +1,7 @@
 import 'package:everline/core/service_locator.dart';
 import 'package:everline/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; // Add this import
 
@@ -20,6 +21,7 @@ class MainApp extends StatelessWidget {
       title: "Everline",
       themeMode: ThemeMode.light,
       theme: ShadThemeData(
+        textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.nunito),
         brightness: Brightness.light,
         colorScheme: ShadColorScheme.fromName(
           'green',
@@ -27,6 +29,7 @@ class MainApp extends StatelessWidget {
         ),
       ),
       darkTheme: ShadThemeData(
+        textTheme: ShadTextTheme.fromGoogleFont(GoogleFonts.nunito),
         brightness: Brightness.dark,
         colorScheme: ShadColorScheme.fromName(
           'green',
@@ -34,6 +37,13 @@ class MainApp extends StatelessWidget {
         ),
       ),
       routerConfig: appRouter,
+      builder: (context, child) {
+        return GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          behavior: HitTestBehavior.translucent,
+          child: ShadToaster(child: child ?? const SizedBox.shrink()),
+        );
+      },
     );
   }
 }
