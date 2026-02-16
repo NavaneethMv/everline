@@ -13,11 +13,12 @@ class TreeLoading extends TreeState {}
 
 class TreeLoaded extends TreeState {
   final List<FamilyTreeNode> nodes;
+  final List<Map<String, dynamic>> relationships;
 
-  const TreeLoaded(this.nodes);
+  const TreeLoaded(this.nodes, this.relationships);
 
   @override
-  List<Object> get props => [nodes];
+  List<Object> get props => [nodes, relationships];
 }
 
 class TreeError extends TreeState {

@@ -35,6 +35,10 @@ class AddMemberState extends Equatable {
   final List<NewRelationship> relationships;
   final List<Map<String, dynamic>> potentialRelatives;
 
+  // Edit mode fields
+  final bool isEditMode;
+  final String? editingMemberId;
+
   const AddMemberState({
     this.firstName = const FirstName.pure(),
     this.lastName = const LastName.pure(),
@@ -54,6 +58,8 @@ class AddMemberState extends Equatable {
     this.currentStep = 0,
     this.relationships = const [],
     this.potentialRelatives = const [],
+    this.isEditMode = false,
+    this.editingMemberId,
   });
 
   bool get isValid => Formz.validate([
@@ -86,6 +92,8 @@ class AddMemberState extends Equatable {
     int? currentStep,
     List<NewRelationship>? relationships,
     List<Map<String, dynamic>>? potentialRelatives,
+    bool? isEditMode,
+    String? editingMemberId,
   }) {
     return AddMemberState(
       firstName: firstName ?? this.firstName,
@@ -106,6 +114,8 @@ class AddMemberState extends Equatable {
       currentStep: currentStep ?? this.currentStep,
       relationships: relationships ?? this.relationships,
       potentialRelatives: potentialRelatives ?? this.potentialRelatives,
+      isEditMode: isEditMode ?? this.isEditMode,
+      editingMemberId: editingMemberId ?? this.editingMemberId,
     );
   }
 
@@ -129,5 +139,7 @@ class AddMemberState extends Equatable {
     currentStep,
     relationships,
     potentialRelatives,
+    isEditMode,
+    editingMemberId,
   ];
 }

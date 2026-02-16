@@ -22,7 +22,7 @@ class CustomCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Text(title, style: Theme.of(context).textTheme.labelSmall),
+          Text(title, style: Theme.of(context).textTheme.bodyMedium),
           Icon(icon, color: Theme.of(context).colorScheme.primary),
         ],
       ),

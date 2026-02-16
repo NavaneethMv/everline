@@ -1,3 +1,4 @@
+import 'package:everline/routes/routes.dart';
 import 'package:everline/shared/widgets/custom_navbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,7 @@ class CommonLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAddMember = currentPath == '/add';
+    final isMember = currentPath == '/members';
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -51,16 +53,19 @@ class CommonLayout extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                ShadIconButton.secondary(
-                  icon: const Icon(LucideIcons.search),
-                  shadows: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
+                !isMember
+                    ? ShadIconButton.secondary(
+                        onPressed: () => context.go(Routes.members),
+                        icon: const Icon(LucideIcons.search),
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
                 if (!isAddMember) ...[
                   SizedBox(width: 16.0),
                   ShadIconButton.secondary(

@@ -23,12 +23,7 @@ class MemberGrowthChart extends StatelessWidget {
     final optimizedMaxY = maxY == 0 ? 5.0 : maxY * 1.2;
 
     return ShadCard(
-      title: Text(
-        'Usage Trend',
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-      ),
+      title: Text('Usage Trend', style: Theme.of(context).textTheme.bodyMedium),
       child: AspectRatio(
         aspectRatio: 1.70,
         child: Padding(
@@ -104,6 +99,7 @@ class MemberGrowthChart extends StatelessWidget {
                 ),
               ),
               borderData: FlBorderData(show: false),
+              clipData: FlClipData.all(),
               minX: 0,
               maxX: (sortedEntries.length - 1).toDouble(),
               minY: 0,
@@ -114,6 +110,7 @@ class MemberGrowthChart extends StatelessWidget {
                     return FlSpot(e.key.toDouble(), e.value.value.toDouble());
                   }).toList(),
                   isCurved: true,
+                  preventCurveOverShooting: true,
                   color: Theme.of(context).colorScheme.primary,
                   barWidth: 3,
                   isStrokeCapRound: true,

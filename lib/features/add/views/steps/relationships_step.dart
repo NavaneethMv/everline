@@ -14,7 +14,6 @@ class RelationshipsStep extends StatefulWidget {
 class _RelationshipsStepState extends State<RelationshipsStep> {
   final List<Map<String, dynamic>> _relationshipOptions = [
     {'label': 'Parent', 'icon': LucideIcons.heart, 'color': Colors.red},
-    {'label': 'Sibling', 'icon': LucideIcons.users, 'color': Colors.blue},
     {'label': 'Child', 'icon': LucideIcons.baby, 'color': Colors.orange},
     {'label': 'Spouse', 'icon': LucideIcons.userPlus, 'color': Colors.purple},
   ];

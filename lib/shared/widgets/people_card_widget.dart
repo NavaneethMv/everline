@@ -28,12 +28,7 @@ class PeopleCardWidget extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                name,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-              ),
+              Text(name, style: Theme.of(context).textTheme.bodyMedium),
               SizedBox(height: 8),
               Text(
                 role,

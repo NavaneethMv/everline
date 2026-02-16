@@ -28,8 +28,7 @@ class HomeView extends StatelessWidget {
 
               String totalMembers = '1234';
               String upcomingBirthdays = '5';
-              Map<DateTime, int> monthlyGrowth = {}; // Dummy/Empty for skeleton
-
+              Map<DateTime, int> monthlyGrowth = {};
               List<FamilyTreeNode> recentMembersList = List.generate(
                 4,
                 (index) => FamilyTreeNode(
@@ -106,8 +105,7 @@ class HomeView extends StatelessWidget {
                         children: [
                           Text(
                             "Newest members",
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.w500),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                           Icon(
                             LucideIcons.clock,

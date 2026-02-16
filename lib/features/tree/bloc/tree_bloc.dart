@@ -31,32 +31,40 @@ class TreeBloc extends Bloc<TreeEvent, TreeState> {
         final member1 = rel['member1_id'];
         final member2 = rel['member2_id'];
 
-        log("member1: $member1, memeber2: $member2, type: $type");
+        log("Processing: member1: $member1, member2: $member2, type: $type");
 
-        if (type == 'parent' || type == 'father' || type == 'mother') {
+        if (type == 'parent') {
           // member1 is Parent, member2 is Child
           parentMap[member2] ??= [];
           parentMap[member2]!.add(member1);
-        } else if (type == 'child' || type == 'son' || type == 'daughter') {
+          log("Added parent $member1 to child $member2");
+        } else if (type == 'child') {
           // member1 is Child, member2 is Parent
           parentMap[member1] ??= [];
           parentMap[member1]!.add(member2);
+          log("Added parent $member2 to child $member1");
         } else if (type == 'spouse') {
           spouseMap[member1] = member2;
           spouseMap[member2] = member1;
         }
       }
 
+      log("Final parent map: $parentMap");
+
       final nodes = members.map((m) {
         final id = m['id'] as String;
+        // Remove duplicate parent IDs by converting to Set and back to List
+        final parents = (parentMap[id] ?? []).toSet().toList();
+        log("Node $id (${m['first_name']}) has parents: $parents");
         return FamilyTreeNode.fromJson(
           m,
-          parentIds: parentMap[id] ?? [],
+          parentIds: parents,
           partnerId: spouseMap[id],
         );
       }).toList();
 
-      emit(TreeLoaded(nodes));
+      log("Total nodes created: ${nodes.length}");
+      emit(TreeLoaded(nodes, relations));
     } catch (e) {
       emit(TreeError(e.toString()));
     }

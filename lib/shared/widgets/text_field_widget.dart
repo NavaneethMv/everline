@@ -8,6 +8,7 @@ class TextFieldWidget extends StatelessWidget {
   final void Function(String) onChanged;
   final String? error;
   final TextInputType? keyboardType;
+  final String? initialValue;
 
   final EdgeInsetsGeometry? padding;
 
@@ -20,6 +21,7 @@ class TextFieldWidget extends StatelessWidget {
     this.keyboardType,
     this.requiredMark = false,
     this.padding,
+    this.initialValue,
   });
 
   @override
@@ -56,6 +58,7 @@ class TextFieldWidget extends StatelessWidget {
           placeholder: Text(placeholder),
           onChanged: onChanged,
           keyboardType: keyboardType,
+          initialValue: initialValue,
         ),
         if (error != null && error!.isNotEmpty)
           Padding(

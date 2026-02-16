@@ -10,8 +10,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class AddView extends StatelessWidget {
+class AddView extends StatefulWidget {
   const AddView({super.key});
+
+  @override
+  State<AddView> createState() => _AddViewState();
+}
+
+class _AddViewState extends State<AddView> {
+  AddCubit? _addCubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _addCubit ??= context.read<AddCubit>();
+  }
+
+  @override
+  void dispose() {
+    // Reset the form when leaving the add view
+    _addCubit?.resetForm();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +40,13 @@ class AddView extends StatelessWidget {
       listener: (context, state) {
         if (state.status == AddMemberStatus.success) {
           ShadToaster.of(context).show(
-            const ShadToast(
-              title: Text("Success"),
-              description: Text('Member added successfully!'),
+            ShadToast(
+              title: const Text("Success"),
+              description: Text(
+                state.isEditMode
+                    ? 'Member updated successfully!'
+                    : 'Member added successfully!',
+              ),
               alignment: Alignment.topCenter,
             ),
           );
@@ -76,7 +100,10 @@ class AddView extends StatelessWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        _getStepTitle(state.currentStep),
+                                        _getStepTitle(
+                                          state.currentStep,
+                                          state.isEditMode,
+                                        ),
                                         style: ShadTheme.of(context)
                                             .textTheme
                                             .large
@@ -107,7 +134,7 @@ class AddView extends StatelessWidget {
                                                   .withValues(alpha: 0.2),
                                             ),
                                             child: Text(
-                                              '${state.currentStep + 1}/3',
+                                              '${state.currentStep + 1}/${state.isEditMode ? 2 : 3}',
                                               style: ShadTheme.of(context)
                                                   .textTheme
                                                   .small
@@ -122,14 +149,26 @@ class AddView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  Text(switch (state.currentStep) {
-                                    0 =>
-                                      'Enter the basic personal information including name, gender, and birth details to identify this person.',
-                                    1 =>
-                                      'Provide contact information such as email and phone number to keep your family records complete.',
-                                    _ =>
-                                      'Define how this person is related to others in your family tree to build your lineage.',
-                                  }, style: ShadTheme.of(context).textTheme.muted),
+                                  Text(
+                                    state.isEditMode
+                                        ? switch (state.currentStep) {
+                                            0 =>
+                                              'Enter the basic personal information including name, gender, and birth details to identify this person.',
+                                            _ =>
+                                              'Provide contact information such as email and phone number to keep your family records complete.',
+                                          }
+                                        : switch (state.currentStep) {
+                                            0 =>
+                                              'Enter the basic personal information including name, gender, and birth details to identify this person.',
+                                            1 =>
+                                              'Provide contact information such as email and phone number to keep your family records complete.',
+                                            _ =>
+                                              'Define how this person is related to others in your family tree to build your lineage.',
+                                          },
+                                    style: ShadTheme.of(
+                                      context,
+                                    ).textTheme.muted,
+                                  ),
                                 ],
                               ),
                             );
@@ -143,11 +182,16 @@ class AddView extends StatelessWidget {
                             builder: (context, state) {
                               return IndexedStack(
                                 index: state.currentStep,
-                                children: const [
-                                  PersonalInfoStep(),
-                                  ContactInfoStep(),
-                                  RelationshipsStep(),
-                                ],
+                                children: state.isEditMode
+                                    ? const [
+                                        PersonalInfoStep(),
+                                        ContactInfoStep(),
+                                      ]
+                                    : const [
+                                        PersonalInfoStep(),
+                                        ContactInfoStep(),
+                                        RelationshipsStep(),
+                                      ],
                               );
                             },
                           ),
@@ -181,7 +225,7 @@ class AddView extends StatelessWidget {
                         const SizedBox(width: 16),
                       ],
                       Expanded(
-                        child: state.currentStep < 2
+                        child: state.currentStep < (state.isEditMode ? 1 : 2)
                             ? ShadButton(
                                 decoration: ShadDecoration(
                                   border: ShadBorder(
@@ -208,13 +252,20 @@ class AddView extends StatelessWidget {
                                   context.read<AddCubit>().submit();
                                 },
                                 child: state.status == AddMemberStatus.loading
-                                    ? const SizedBox.square(
-                                        dimension: 16,
+                                    ? const SizedBox(
+                                        height: 16,
+                                        width: 16,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
                                         ),
                                       )
-                                    : const Text('Submit'),
+                                    : Text(
+                                        state.isEditMode ? 'Update' : 'Submit',
+                                      ),
                               ),
                       ),
                     ],
@@ -228,14 +279,15 @@ class AddView extends StatelessWidget {
     );
   }
 
-  String _getStepTitle(int step) {
+  String _getStepTitle(int step, bool isEditMode) {
+    final prefix = isEditMode ? 'Editing: ' : '';
     switch (step) {
       case 0:
-        return 'Personal Information';
+        return '${prefix}Personal Information';
       case 1:
-        return 'Contact Information';
+        return '${prefix}Contact Information';
       case 2:
-        return 'Relationships';
+        return '${prefix}Relationships';
       default:
         return '';
     }

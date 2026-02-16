@@ -14,13 +14,18 @@ class ContactInfoStep extends StatelessWidget {
       spacing: 12,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        TextFieldWidget(
-          padding: EdgeInsets.all(16),
-          label: 'Email',
-          placeholder: 'Enter your email',
-          keyboardType: TextInputType.emailAddress,
-          onChanged: (value) {
-            context.read<AddCubit>().emailChanged(value);
+        BlocBuilder<AddCubit, AddMemberState>(
+          builder: (context, state) {
+            return TextFieldWidget(
+              padding: const EdgeInsets.all(16),
+              label: 'Email',
+              placeholder: 'Enter your email',
+              keyboardType: TextInputType.emailAddress,
+              initialValue: state.email,
+              onChanged: (value) {
+                context.read<AddCubit>().emailChanged(value);
+              },
+            );
           },
         ),
 
@@ -30,11 +35,12 @@ class ContactInfoStep extends StatelessWidget {
               previous.showErrors != current.showErrors,
           builder: (context, state) {
             return TextFieldWidget(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               requiredMark: true,
               label: 'Phone Number',
               placeholder: 'Enter your phone number',
               keyboardType: TextInputType.phone,
+              initialValue: state.phoneNumber.value,
               onChanged: (value) {
                 context.read<AddCubit>().phoneNumberChanged(value);
               },
@@ -75,10 +81,11 @@ class ContactInfoStep extends StatelessWidget {
                       radius: const BorderRadius.all(Radius.circular(12)),
                     ),
                   ),
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   id: 'address',
                   placeholder: const Text('Enter your address'),
                   description: const Text('Please provide your address.'),
+                  initialValue: state.address.value,
                   onChanged: (value) {
                     context.read<AddCubit>().addressChanged(value);
                   },
@@ -104,10 +111,11 @@ class ContactInfoStep extends StatelessWidget {
               previous.showErrors != current.showErrors,
           builder: (context, state) {
             return TextFieldWidget(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               requiredMark: true,
               label: 'City',
               placeholder: 'Enter your city',
+              initialValue: state.city.value,
               onChanged: (value) {
                 context.read<AddCubit>().cityChanged(value);
               },
@@ -124,10 +132,11 @@ class ContactInfoStep extends StatelessWidget {
               previous.showErrors != current.showErrors,
           builder: (context, state) {
             return TextFieldWidget(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               requiredMark: true,
               label: 'State',
               placeholder: 'Enter your state',
+              initialValue: state.state.value,
               onChanged: (value) {
                 context.read<AddCubit>().stateChanged(value);
               },
@@ -138,12 +147,17 @@ class ContactInfoStep extends StatelessWidget {
           },
         ),
 
-        TextFieldWidget(
-          padding: EdgeInsets.all(16),
-          label: 'Occupation',
-          placeholder: 'Enter your occupation',
-          onChanged: (value) {
-            context.read<AddCubit>().occupationChanged(value);
+        BlocBuilder<AddCubit, AddMemberState>(
+          builder: (context, state) {
+            return TextFieldWidget(
+              padding: const EdgeInsets.all(16),
+              label: 'Occupation',
+              placeholder: 'Enter your occupation',
+              initialValue: state.occupation,
+              onChanged: (value) {
+                context.read<AddCubit>().occupationChanged(value);
+              },
+            );
           },
         ),
       ],

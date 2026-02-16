@@ -95,4 +95,72 @@ class AddMemberRepository {
       throw Exception('Failed to add relationship: $e');
     }
   }
+
+  Future<void> updateMember(String id, Map<String, dynamic> updates) async {
+    try {
+      // id should be the UUID primary key usually
+      await client.client.from('family_members').update(updates).eq('id', id);
+    } catch (e) {
+      throw Exception('Failed to update member: $e');
+    }
+  }
+
+  Future<void> updateRelationship({
+    required String member1Id,
+    required String member2Id,
+    required String relationshipType,
+  }) async {
+    try {
+      // Check if relationship exists
+      final existing = await client.client
+          .from('family_relationships')
+          .select()
+          .eq('member1_id', member1Id)
+          .eq('member2_id', member2Id);
+
+      if (existing.isNotEmpty) {
+        await client.client
+            .from('family_relationships')
+            .update({'relationship_type': relationshipType})
+            .eq('member1_id', member1Id)
+            .eq('member2_id', member2Id);
+      } else {
+        await addRelationship(
+          member1Id: member1Id,
+          member2Id: member2Id,
+          relationshipType: relationshipType,
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to update relationship: $e');
+    }
+  }
+
+  Future<void> deleteRelationship({
+    required String member1Id,
+    required String member2Id,
+  }) async {
+    try {
+      await client.client
+          .from('family_relationships')
+          .delete()
+          .eq('member1_id', member1Id)
+          .eq('member2_id', member2Id);
+    } catch (e) {
+      throw Exception('Failed to delete relationship: $e');
+    }
+  }
+
+  Future<List<String>> getParents(String childId) async {
+    try {
+      final response = await client.client
+          .from('family_relationships')
+          .select('member1_id')
+          .eq('member2_id', childId)
+          .eq('relationship_type', 'parent');
+      return (response as List).map((e) => e['member1_id'] as String).toList();
+    } catch (e) {
+      return [];
+    }
+  }
 }

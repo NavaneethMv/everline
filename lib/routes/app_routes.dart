@@ -7,14 +7,36 @@ import 'package:everline/features/home/views/home_view.dart';
 import 'package:everline/features/members/views/members_view.dart';
 import 'package:everline/features/settings/views/settings_view.dart';
 import 'package:everline/features/tree/views/tree_view.dart';
+import 'package:everline/routes/go_router_refresh_stream.dart';
 import 'package:everline/routes/routes.dart';
 import 'package:everline/shared/widgets/common_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: Routes.auth,
+  refreshListenable: GoRouterRefreshStream(
+    Supabase.instance.client.auth.onAuthStateChange,
+  ),
+  redirect: (context, state) async {
+    final session = Supabase.instance.client.auth.currentSession;
+    final isAuthRoute = state.matchedLocation == Routes.auth;
+
+    if (session != null && isAuthRoute) {
+      final prefs = await SharedPreferences.getInstance();
+      final startupPage = prefs.getString('startupPage') ?? Routes.home;
+      return startupPage;
+    }
+
+    if (session == null && !isAuthRoute) {
+      return Routes.auth;
+    }
+
+    return null;
+  },
   routes: [
     GoRoute(
       path: Routes.auth,
@@ -26,7 +48,10 @@ final GoRouter appRouter = GoRouter(
     ),
     ShellRoute(
       builder: (context, state, child) {
-        return CommonLayout(widget: child, currentPath: state.uri.path);
+        return BlocProvider(
+          create: (context) => AddCubit(),
+          child: CommonLayout(widget: child, currentPath: state.uri.path),
+        );
       },
       routes: [
         GoRoute(
@@ -52,10 +77,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: Routes.add,
           name: 'add',
-          builder: (context, state) => BlocProvider(
-            create: (context) => AddCubit(),
-            child: const AddView(),
-          ),
+          builder: (context, state) => const AddView(),
         ),
       ],
     ),
