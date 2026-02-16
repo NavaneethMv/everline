@@ -1,4 +1,4 @@
-// lib/features/add/widgets/image_picker_widget.dart
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -49,31 +49,46 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _pickImage,
-      child: Container(
-        width: 120,
-        height: 120,
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[300]!, width: 2),
+      child: DottedBorder(
+        options: RoundedRectDottedBorderOptions(
+          radius: const Radius.circular(25),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+          strokeWidth: 2,
+          dashPattern: const [6, 4],
+          padding: EdgeInsets.zero,
         ),
-        child: _imagePath != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.file(File(_imagePath!), fit: BoxFit.cover),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    LucideIcons.camera200,
-                    size: 40,
-                    color: Colors.grey[600],
-                  ),
-                  const SizedBox(height: 8),
-                  Text('Add Photo', style: TextStyle(color: Colors.grey[600])),
-                ],
-              ),
+        child: Container(
+          width: 120,
+          height: 140,
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: _imagePath != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: Image.file(File(_imagePath!), fit: BoxFit.cover),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      LucideIcons.camera300,
+                      size: 40,
+                      color: ShadTheme.of(context).colorScheme.mutedForeground,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add Photo',
+                      style: ShadTheme.of(context).textTheme.small.copyWith(
+                        color: ShadTheme.of(
+                          context,
+                        ).colorScheme.mutedForeground,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }

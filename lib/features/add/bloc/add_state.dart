@@ -7,6 +7,7 @@ import 'package:everline/features/add/models/form/gender.dart';
 import 'package:everline/features/add/models/form/last_name.dart';
 import 'package:everline/features/add/models/form/phone_number.dart';
 import 'package:everline/features/add/models/form/state_field.dart';
+import 'package:everline/features/add/models/new_relationship.dart';
 import 'package:formz/formz.dart';
 
 enum AddMemberStatus { initial, loading, success, failure }
@@ -29,6 +30,11 @@ class AddMemberState extends Equatable {
   final AddMemberStatus status;
   final String? errorMessage;
 
+  // New fields for Relationships and Stepper
+  final int currentStep;
+  final List<NewRelationship> relationships;
+  final List<Map<String, dynamic>> potentialRelatives;
+
   const AddMemberState({
     this.firstName = const FirstName.pure(),
     this.lastName = const LastName.pure(),
@@ -45,6 +51,9 @@ class AddMemberState extends Equatable {
     this.status = AddMemberStatus.initial,
     this.errorMessage,
     this.showErrors = false,
+    this.currentStep = 0,
+    this.relationships = const [],
+    this.potentialRelatives = const [],
   });
 
   bool get isValid => Formz.validate([
@@ -74,6 +83,9 @@ class AddMemberState extends Equatable {
     AddMemberStatus? status,
     String? errorMessage,
     bool? showErrors,
+    int? currentStep,
+    List<NewRelationship>? relationships,
+    List<Map<String, dynamic>>? potentialRelatives,
   }) {
     return AddMemberState(
       firstName: firstName ?? this.firstName,
@@ -91,6 +103,9 @@ class AddMemberState extends Equatable {
       status: status ?? this.status,
       errorMessage: errorMessage,
       showErrors: showErrors ?? this.showErrors,
+      currentStep: currentStep ?? this.currentStep,
+      relationships: relationships ?? this.relationships,
+      potentialRelatives: potentialRelatives ?? this.potentialRelatives,
     );
   }
 
@@ -111,5 +126,8 @@ class AddMemberState extends Equatable {
     status,
     errorMessage,
     showErrors,
+    currentStep,
+    relationships,
+    potentialRelatives,
   ];
 }

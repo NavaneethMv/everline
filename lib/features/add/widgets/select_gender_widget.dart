@@ -13,7 +13,15 @@ class SelectGenderWidget extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 180),
       child: ShadSelect<String>(
-        placeholder: const Text('Select gender'),
+        padding: const EdgeInsets.all(16),
+        decoration: ShadDecoration(
+          color: Colors.grey[50],
+          border: ShadBorder.all(
+            width: 1,
+            radius: const BorderRadius.all(Radius.circular(8)),
+          ),
+        ),
+        placeholder: Text('Select gender'),
         options: [
           Padding(
             padding: const EdgeInsets.fromLTRB(32, 6, 6, 6),

@@ -26,7 +26,7 @@ final GoRouter appRouter = GoRouter(
     ),
     ShellRoute(
       builder: (context, state, child) {
-        return CommonLayout(widget: child);
+        return CommonLayout(widget: child, currentPath: state.uri.path);
       },
       routes: [
         GoRoute(

@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:everline/features/add/bloc/add_cubit.dart';
 import 'package:everline/features/add/bloc/add_state.dart';
-import 'package:everline/features/add/widgets/image_picker_widget.dart';
-import 'package:everline/features/add/widgets/select_gender_widget.dart';
-import 'package:everline/shared/widgets/text_field_widget.dart';
+import 'package:everline/features/add/views/steps/contact_info_step.dart';
+import 'package:everline/features/add/views/steps/personal_info_step.dart';
+import 'package:everline/features/add/views/steps/relationships_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +28,7 @@ class AddView extends StatelessWidget {
           );
           context.goNamed('tree');
         } else if (state.status == AddMemberStatus.failure) {
+          log(state.errorMessage ?? 'Failed to add member');
           ShadToaster.of(context).show(
             ShadToast.destructive(
               title: Text("Failure"),
@@ -36,357 +39,220 @@ class AddView extends StatelessWidget {
         }
       },
       child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            top: 80,
-            left: 24,
-            right: 24,
-            bottom: 80,
-          ),
-          child: Column(
-            spacing: 12,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ImagePickerWidget(
-                onImageSelected: (path) {
-                  context.read<AddCubit>().profileImageChanged(path);
-                },
-              ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) =>
-                    previous.firstName != current.firstName,
-                builder: (context, state) {
-                  return TextFieldWidget(
-                    requiredMark: true,
-                    label: 'First Name',
-                    placeholder: 'Enter your first name',
-                    onChanged: (value) {
-                      context.read<AddCubit>().firstNameChanged(value);
-                    },
-                    error:
-                        state.showErrors && state.firstName.displayError != null
-                        ? 'First name is required'
-                        : null,
-                  );
-                },
-              ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) =>
-                    previous.lastName != current.lastName,
-                builder: (context, state) {
-                  return TextFieldWidget(
-                    requiredMark: true,
-                    label: 'Last Name',
-                    placeholder: 'Enter your last name',
-                    onChanged: (value) {
-                      context.read<AddCubit>().lastNameChanged(value);
-                    },
-                    error:
-                        state.showErrors && state.lastName.displayError != null
-                        ? 'Last name is required'
-                        : null,
-                  );
-                },
-              ),
-
-              TextFieldWidget(
-                label: 'Nick Name',
-                placeholder: 'Enter your nick name',
-                onChanged: (value) {
-                  context.read<AddCubit>().nickNameChanged(value);
-                },
-              ),
-
-              const ShadSeparator.horizontal(
-                thickness: 4,
-                radius: BorderRadius.all(Radius.circular(4)),
-              ),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: BlocBuilder<AddCubit, AddMemberState>(
-                      buildWhen: (previous, current) =>
-                          previous.dateOfBirth != current.dateOfBirth,
-                      builder: (context, state) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 4.0,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Date of Birth',
-                                  style: ShadTheme.of(context).textTheme.small,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '*',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 600),
-                              child: ShadDatePicker(
-                                captionLayout:
-                                    ShadCalendarCaptionLayout.dropdown,
-                                placeholder: const Text('Born on'),
-                                onChanged: (date) {
-                                  context.read<AddCubit>().dateOfBirthChanged(
-                                    date,
-                                  );
-                                },
-                              ),
-                            ),
-                            if (state.showErrors &&
-                                state.dateOfBirth.displayError != null)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4),
-                                child: Text(
-                                  'Date of birth is required',
-                                  style: ShadTheme.of(context).textTheme.small
-                                      .copyWith(
-                                        color: ShadTheme.of(
-                                          context,
-                                        ).colorScheme.destructive,
-                                      ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-
-                  Expanded(
-                    child: BlocBuilder<AddCubit, AddMemberState>(
-                      buildWhen: (previous, current) =>
-                          previous.gender != current.gender,
-                      builder: (context, state) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 4.0,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Gender',
-                                  style: ShadTheme.of(context).textTheme.small,
-                                ),
-                                const SizedBox(width: 4),
-                                const Text(
-                                  '*',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            SelectGenderWidget(
-                              onChanged: (gender) {
-                                if (gender != null) {
-                                  context.read<AddCubit>().genderChanged(
-                                    gender,
-                                  );
-                                }
-                              },
-                            ),
-                            if (state.showErrors &&
-                                state.gender.displayError != null)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4),
-                                child: Text(
-                                  'Gender is required',
-                                  style: ShadTheme.of(context).textTheme.small
-                                      .copyWith(
-                                        color: ShadTheme.of(
-                                          context,
-                                        ).colorScheme.destructive,
-                                      ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-
-              TextFieldWidget(
-                label: 'Email',
-                placeholder: 'Enter your email',
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  context.read<AddCubit>().emailChanged(value);
-                },
-              ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) =>
-                    previous.phoneNumber != current.phoneNumber,
-                builder: (context, state) {
-                  return TextFieldWidget(
-                    requiredMark: true,
-                    label: 'Phone Number',
-                    placeholder: 'Enter your phone number',
-                    keyboardType: TextInputType.phone,
-                    onChanged: (value) {
-                      context.read<AddCubit>().phoneNumberChanged(value);
-                    },
-                    error:
-                        state.showErrors &&
-                            state.phoneNumber.displayError != null
-                        ? 'Phone number is required'
-                        : null,
-                  );
-                },
-              ),
-
-              const ShadSeparator.horizontal(
-                thickness: 4,
-                radius: BorderRadius.all(Radius.circular(4)),
-              ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) =>
-                    previous.address != current.address,
-                builder: (context, state) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 4.0,
-                    children: [
-                      Row(
-                        children: [
-                          const Text('Address'),
-                          const SizedBox(width: 4),
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ShadTheme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: -1.05),
+                        blurRadius: 9,
+                        offset: const Offset(-1, 2),
                       ),
-                      ShadTextareaFormField(
-                        id: 'address',
-                        placeholder: const Text('Enter your address'),
-                        description: const Text('Please provide your address.'),
-                        onChanged: (value) {
-                          context.read<AddCubit>().addressChanged(value);
-                        },
-                      ),
-                      if (state.showErrors &&
-                          state.address.displayError != null)
+                    ],
+                  ),
+
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        BlocBuilder<AddCubit, AddMemberState>(
+                          builder: (context, state) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 24,
+                              ),
+                              child: Column(
+                                spacing: 16,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _getStepTitle(state.currentStep),
+                                        style: ShadTheme.of(context)
+                                            .textTheme
+                                            .large
+                                            .copyWith(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      Row(
+                                        spacing: 4.0,
+                                        children: [
+                                          Text(
+                                            'Step',
+                                            style: ShadTheme.of(
+                                              context,
+                                            ).textTheme.muted,
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              color: ShadTheme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withValues(alpha: 0.2),
+                                            ),
+                                            child: Text(
+                                              '${state.currentStep + 1}/3',
+                                              style: ShadTheme.of(context)
+                                                  .textTheme
+                                                  .small
+                                                  .copyWith(
+                                                    color: ShadTheme.of(
+                                                      context,
+                                                    ).colorScheme.primary,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Text(switch (state.currentStep) {
+                                    0 =>
+                                      'Enter the basic personal information including name, gender, and birth details to identify this person.',
+                                    1 =>
+                                      'Provide contact information such as email and phone number to keep your family records complete.',
+                                    _ =>
+                                      'Define how this person is related to others in your family tree to build your lineage.',
+                                  }, style: ShadTheme.of(context).textTheme.muted),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: Text(
-                            'Address is required',
-                            style: ShadTheme.of(context).textTheme.small
-                                .copyWith(
-                                  color: ShadTheme.of(
-                                    context,
-                                  ).colorScheme.destructive,
-                                ),
+                          padding: const EdgeInsets.all(24),
+                          child: BlocBuilder<AddCubit, AddMemberState>(
+                            buildWhen: (previous, current) =>
+                                previous.currentStep != current.currentStep,
+                            builder: (context, state) {
+                              return IndexedStack(
+                                index: state.currentStep,
+                                children: const [
+                                  PersonalInfoStep(),
+                                  ContactInfoStep(),
+                                  RelationshipsStep(),
+                                ],
+                              );
+                            },
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Navigation Buttons
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: BlocBuilder<AddCubit, AddMemberState>(
+                builder: (context, state) {
+                  return Row(
+                    children: [
+                      if (state.currentStep > 0) ...[
+                        Expanded(
+                          child: ShadButton.outline(
+                            height: 50,
+                            onPressed: () {
+                              context.read<AddCubit>().stepChanged(
+                                state.currentStep - 1,
+                              );
+                            },
+                            child: const Text('Back'),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                      ],
+                      Expanded(
+                        child: state.currentStep < 2
+                            ? ShadButton(
+                                decoration: ShadDecoration(
+                                  border: ShadBorder(
+                                    radius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                height: 50,
+                                onPressed: () {
+                                  if (_isStepValid(state)) {
+                                    context.read<AddCubit>().stepChanged(
+                                      state.currentStep + 1,
+                                    );
+                                  } else {
+                                    context.read<AddCubit>().validateForm();
+                                  }
+                                },
+                                child: const Text('Next'),
+                              )
+                            : ShadButton(
+                                height: 50,
+                                enabled:
+                                    state.status != AddMemberStatus.loading,
+                                onPressed: () {
+                                  context.read<AddCubit>().submit();
+                                },
+                                child: state.status == AddMemberStatus.loading
+                                    ? const SizedBox.square(
+                                        dimension: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text('Submit'),
+                              ),
+                      ),
                     ],
                   );
                 },
               ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) => previous.city != current.city,
-                builder: (context, state) {
-                  return TextFieldWidget(
-                    requiredMark: true,
-                    label: 'City',
-                    placeholder: 'Enter your city',
-                    onChanged: (value) {
-                      context.read<AddCubit>().cityChanged(value);
-                    },
-                    error: state.showErrors && state.city.displayError != null
-                        ? 'City is required'
-                        : null,
-                  );
-                },
-              ),
-
-              BlocBuilder<AddCubit, AddMemberState>(
-                buildWhen: (previous, current) =>
-                    previous.state != current.state,
-                builder: (context, state) {
-                  return TextFieldWidget(
-                    requiredMark: true,
-                    label: 'State',
-                    placeholder: 'Enter your state',
-                    onChanged: (value) {
-                      context.read<AddCubit>().stateChanged(value);
-                    },
-                    error: state.showErrors && state.state.displayError != null
-                        ? 'State is required'
-                        : null,
-                  );
-                },
-              ),
-
-              TextFieldWidget(
-                label: 'Occupation',
-                placeholder: 'Enter your occupation',
-                onChanged: (value) {
-                  context.read<AddCubit>().occupationChanged(value);
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: BlocBuilder<AddCubit, AddMemberState>(
-                  buildWhen: (previous, current) =>
-                      previous.isValid != current.isValid ||
-                      previous.status != current.status,
-                  builder: (context, state) {
-                    return ShadButton(
-                      enabled:
-                          state.isValid &&
-                          state.status != AddMemberStatus.loading,
-                      onPressed: () {
-                        context.read<AddCubit>().submit();
-                      },
-                      child: state.status == AddMemberStatus.loading
-                          ? SizedBox.square(
-                              dimension: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: ShadTheme.of(
-                                  context,
-                                ).colorScheme.primaryForeground,
-                              ),
-                            )
-                          : const Text('Submit'),
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  String _getStepTitle(int step) {
+    switch (step) {
+      case 0:
+        return 'Personal Information';
+      case 1:
+        return 'Contact Information';
+      case 2:
+        return 'Relationships';
+      default:
+        return '';
+    }
+  }
+
+  bool _isStepValid(AddMemberState state) {
+    if (state.currentStep == 0) {
+      return state.firstName.isValid &&
+          state.lastName.isValid &&
+          state.dateOfBirth.isValid &&
+          state.gender.isValid;
+    } else if (state.currentStep == 1) {
+      return state.phoneNumber.isValid &&
+          state.address.isValid &&
+          state.city.isValid &&
+          state.state.isValid;
+    }
+    return true;
   }
 }

@@ -7,6 +7,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AddMemberRepository {
   final client = getIt<SupabaseService>();
 
+  /// Inserts a new member record into the 'family_members' table.
+  ///
+  /// [member]: A map containing the member's data to be inserted.
+  ///
+  /// Returns the response from Supabase if successful, otherwise throws an error.
   Future<dynamic> addMember(Map<String, dynamic> member) async {
     try {
       final response = await client.client
@@ -19,14 +24,17 @@ class AddMemberRepository {
     }
   }
 
-  Future<String?> uploadProfileImage(
-    String phoneNumber,
-    String filePath,
-  ) async {
+  /// Uploads a profile image to Supabase Storage and returns its public URL.
+  ///
+  /// [memberId]: The unique identifier for the member (used in the file name).
+  /// [filePath]: The local file path of the image to upload.
+  ///
+  /// Returns the public URL of the uploaded image if successful, otherwise throws an error.
+  Future<String?> uploadProfileImage(String memberId, String filePath) async {
     try {
-      final fileName = 'avatar/profile_$phoneNumber.jpg';
+      final fileName = 'avatar/profile_$memberId.jpg';
       final photoFile = File(filePath);
-      final String response = await client.client.storage
+      await client.client.storage
           .from('profile_photo')
           .upload(
             fileName,
@@ -42,12 +50,17 @@ class AddMemberRepository {
     }
   }
 
-  Future<dynamic> memberExists(String phoneNumber) async {
+  /// Checks if a member with the given member ID already exists in the 'family_members' table.
+  ///
+  /// [memberId]: The member ID to check for existence.
+  ///
+  /// Returns true if a member exists, false otherwise. Throws an error on failure.
+  Future<dynamic> memberExists(String memberId) async {
     try {
       final response = await client.client
           .from('family_members')
           .select()
-          .eq('phone_number', phoneNumber)
+          .eq('member_id', memberId)
           .limit(1);
       return response.isNotEmpty;
     } catch (e) {
@@ -55,7 +68,31 @@ class AddMemberRepository {
     }
   }
 
-  // TODO: phone number country code - alternative phone number
-  // TODO: married or not - date of anniversary
-  // TODO: alive or not if yes - date of anniversary
+  Future<List<Map<String, dynamic>>> getMembers() async {
+    try {
+      final response = await client.client
+          .from('family_members')
+          .select('id, first_name, last_name, gender, member_id')
+          .order('first_name', ascending: true);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      throw Exception('Failed to fetch members: $e');
+    }
+  }
+
+  Future<void> addRelationship({
+    required String member1Id,
+    required String member2Id,
+    required String relationshipType,
+  }) async {
+    try {
+      await client.client.from('family_relationships').insert({
+        'member1_id': member1Id,
+        'member2_id': member2Id,
+        'relationship_type': relationshipType,
+      });
+    } catch (e) {
+      throw Exception('Failed to add relationship: $e');
+    }
+  }
 }

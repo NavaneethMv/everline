@@ -6,8 +6,10 @@ class TextFieldWidget extends StatelessWidget {
   final String label;
   final String placeholder;
   final void Function(String) onChanged;
-  final String? error; // Make it nullable
+  final String? error;
   final TextInputType? keyboardType;
+
+  final EdgeInsetsGeometry? padding;
 
   const TextFieldWidget({
     super.key,
@@ -17,6 +19,7 @@ class TextFieldWidget extends StatelessWidget {
     this.error,
     this.keyboardType,
     this.requiredMark = false,
+    this.padding,
   });
 
   @override
@@ -26,6 +29,14 @@ class TextFieldWidget extends StatelessWidget {
       spacing: 8.0,
       children: [
         ShadInputFormField(
+          decoration: ShadDecoration(
+            color: Colors.grey[50],
+            border: ShadBorder.all(
+              width: 1,
+              radius: const BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
+          padding: padding,
           label: requiredMark == true
               ? RichText(
                   text: TextSpan(

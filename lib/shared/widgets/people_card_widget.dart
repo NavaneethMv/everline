@@ -4,13 +4,13 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 class PeopleCardWidget extends StatelessWidget {
   final String name;
   final String role;
-  final String avatarUrl;
+  final String? avatarUrl;
 
   const PeopleCardWidget({
     super.key,
     required this.name,
     required this.role,
-    required this.avatarUrl,
+    this.avatarUrl,
   });
 
   @override
@@ -19,7 +19,11 @@ class PeopleCardWidget extends StatelessWidget {
       padding: EdgeInsets.all(12.0),
       child: Row(
         children: [
-          ShadAvatar(avatarUrl, placeholder: Text('CN')),
+          ShadAvatar(
+            avatarUrl?.isNotEmpty == true ? avatarUrl! : LucideIcons.user,
+            placeholder: const Icon(LucideIcons.user),
+            backgroundColor: Colors.grey[300],
+          ),
           SizedBox(width: 16.0),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
