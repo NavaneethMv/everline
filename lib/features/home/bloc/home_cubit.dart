@@ -33,14 +33,16 @@ class HomeCubit extends Cubit<HomeState> {
           )
           .length;
 
-      final upcomingBirthdays = nodes.where((n) {
+      final upcomingBirthdayMembers = nodes.where((n) {
         if (n.dob == null) return false;
         final now = DateTime.now();
         final dob = n.dob!;
         final nextBday = DateTime(now.year, dob.month, dob.day);
         final diff = nextBday.difference(now).inDays;
         return diff >= 0 && diff <= 30;
-      }).length;
+      }).toList();
+
+      final upcomingBirthdaysCount = upcomingBirthdayMembers.length;
 
       final recentMembers = List<FamilyTreeNode>.from(nodes);
       recentMembers.sort((a, b) {
@@ -73,9 +75,10 @@ class HomeCubit extends Cubit<HomeState> {
         HomeLoaded(
           totalMembers: totalMembers,
           newSignups: newSignups,
-          upcomingBirthdays: upcomingBirthdays,
+          upcomingBirthdays: upcomingBirthdaysCount,
           recentMembers: topRecentMembers,
           monthlyGrowth: monthlyGrowth,
+          upcomingBirthdayMembers: upcomingBirthdayMembers,
         ),
       );
     } catch (e) {
