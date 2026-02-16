@@ -29,6 +29,16 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     _imagePath = widget.initialImagePath;
   }
 
+  @override
+  void didUpdateWidget(ImagePickerWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialImagePath != oldWidget.initialImagePath) {
+      setState(() {
+        _imagePath = widget.initialImagePath;
+      });
+    }
+  }
+
   Future<void> _pickImage() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
@@ -109,7 +119,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               child: _imagePath != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(25),
-                      child: Image.file(File(_imagePath!), fit: BoxFit.cover),
+                      child: _imagePath!.startsWith('http')
+                          ? Image.network(_imagePath!, fit: BoxFit.cover)
+                          : Image.file(File(_imagePath!), fit: BoxFit.cover),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
