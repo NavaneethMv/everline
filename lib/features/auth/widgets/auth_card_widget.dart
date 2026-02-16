@@ -1,4 +1,5 @@
 import 'package:everline/features/auth/bloc/auth_bloc.dart';
+import 'package:everline/shared/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -9,6 +10,7 @@ class AuthCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ShadCard(
+      radius: BorderRadius.all(Radius.circular(16)),
       title: const Text('Sign in to your account'),
       description: Text(
         "Sign in to your account and start viewing your everline",
@@ -16,14 +18,25 @@ class AuthCardWidget extends StatelessWidget {
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ShadCheckbox(
-            value: true,
-            label: const Text('Accept terms and conditions'),
+          BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              return ShadCheckbox(
+                value: state.isTermsAccepted,
+                label: const Text('Accept terms and conditions'),
+                onChanged: (value) {
+                  context.read<AuthBloc>().add(
+                    TermsAcceptedChangedEvent(isTermsAccepted: value),
+                  );
+                },
+              );
+            },
           ),
           SizedBox(height: 16),
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return ShadButton(
+                height: 50,
+                width: double.infinity,
                 leading: state.status == AuthStatus.loading
                     ? SizedBox.square(
                         dimension: 16,
@@ -39,7 +52,12 @@ class AuthCardWidget extends StatelessWidget {
                 onPressed: () => context.read<AuthBloc>().add(LoginEvent()),
                 child: state.status == AuthStatus.loading
                     ? Text("Please wait")
-                    : Text('login'),
+                    : Text(
+                        'login',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(color: Colors.white),
+                      ),
               );
             },
           ),
@@ -49,15 +67,19 @@ class AuthCardWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 16),
-          ShadInputFormField(
-            label: const Text('Email'),
+          TextFieldWidget(
+            padding: EdgeInsets.all(16),
+            label: 'Email',
+            placeholder: 'Enter your email',
             onChanged: (value) {
               context.read<AuthBloc>().add(EmailChangedEvent(email: value));
             },
           ),
           const SizedBox(height: 8),
-          ShadInputFormField(
-            label: const Text('Password'),
+          TextFieldWidget(
+            padding: EdgeInsets.all(16),
+            label: 'Password',
+            placeholder: 'Enter your password',
             obscureText: true,
             onChanged: (value) {
               context.read<AuthBloc>().add(
