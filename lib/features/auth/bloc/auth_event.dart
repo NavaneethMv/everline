@@ -25,6 +25,15 @@ class PassWordChangedEvent extends AuthEvent {
   List<Object?> get props => [password];
 }
 
+class TermsAcceptedChangedEvent extends AuthEvent {
+  final bool isTermsAccepted;
+
+  TermsAcceptedChangedEvent({required this.isTermsAccepted});
+
+  @override
+  List<Object?> get props => [isTermsAccepted];
+}
+
 // Action events
 
 class LoginEvent extends AuthEvent {
