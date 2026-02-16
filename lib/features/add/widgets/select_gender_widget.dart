@@ -21,7 +21,7 @@ class SelectGenderWidget extends StatelessWidget {
         Expanded(
           child: _GenderCard(
             label: 'Male',
-            icon: LucideIcons.user,
+            icon: Icons.male,
             isSelected: isMale,
             onTap: () => onChanged('male'),
           ),
@@ -30,7 +30,7 @@ class SelectGenderWidget extends StatelessWidget {
         Expanded(
           child: _GenderCard(
             label: 'Female',
-            icon: LucideIcons.user,
+            icon: Icons.female,
             isSelected: isFemale,
             onTap: () => onChanged('female'),
           ),
@@ -88,7 +88,7 @@ class _GenderCard extends StatelessWidget {
               size: 28,
               color: isSelected ? Colors.white : Colors.grey[600],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               label,
               style: theme.textTheme.muted.copyWith(
