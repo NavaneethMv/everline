@@ -107,6 +107,8 @@ class _EditRelationshipSheetState extends State<EditRelationshipSheet> {
       context: context,
       builder: (context) => ShadDialog.alert(
         constraints: const BoxConstraints(maxWidth: 400),
+        radius: BorderRadius.circular(25),
+        removeBorderRadiusWhenTiny: false,
         title: const Text('Delete Relationship'),
         description: Text(
           'Are you sure you want to delete the relationship with ${relationship['other_member_name']}?',
