@@ -16,9 +16,16 @@ class PersonalInfoStep extends StatelessWidget {
       spacing: 12,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        ImagePickerWidget(
-          onImageSelected: (path) {
-            context.read<AddCubit>().profileImageChanged(path);
+        BlocBuilder<AddCubit, AddMemberState>(
+          buildWhen: (previous, current) =>
+              previous.profileImagePath != current.profileImagePath,
+          builder: (context, state) {
+            return ImagePickerWidget(
+              initialImagePath: state.profileImagePath,
+              onImageSelected: (path) {
+                context.read<AddCubit>().profileImageChanged(path);
+              },
+            );
           },
         ),
 
