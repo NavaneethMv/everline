@@ -5,6 +5,7 @@ import 'package:everline/features/tree/bloc/tree_bloc.dart';
 import 'package:everline/features/tree/models/family_tree_node.dart';
 import 'package:everline/features/tree/repository/tree_repository.dart';
 import 'package:everline/features/tree/views/edit_relationship_view.dart';
+import 'package:everline/shared/widgets/common_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tree_graph/flutter_tree_graph.dart' as graph;
@@ -23,6 +24,7 @@ class TreeView extends StatelessWidget {
             TreeBloc(repository: context.read<TreeRepository>())
               ..add(LoadTree()),
         child: Scaffold(
+          appBar: const CommonAppBar(title: 'Family Members'),
           backgroundColor: ShadTheme.of(context).colorScheme.background,
           body: BlocBuilder<TreeBloc, TreeState>(
             builder: (context, state) {
@@ -221,7 +223,7 @@ class TreeView extends StatelessWidget {
           ),
           Positioned(
             right: -12,
-            top: 35,
+            top: 10,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
@@ -251,7 +253,7 @@ class TreeView extends StatelessWidget {
           ),
           Positioned(
             right: -12,
-            top: 100,
+            top: 117,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () async {
@@ -296,8 +298,8 @@ class TreeView extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 70,
-            left: -12,
+            top: 10,
+            left: -11,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () => _confirmDeleteNode(context, node),
@@ -307,13 +309,13 @@ class TreeView extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: theme.colorScheme.destructive,
+                  color: theme.colorScheme.background,
                   border: Border.all(color: theme.colorScheme.border),
                 ),
                 child: Icon(
                   LucideIcons.trash,
                   size: 16,
-                  color: theme.colorScheme.background,
+                  color: theme.colorScheme.destructive,
                 ),
               ),
             ),
@@ -605,20 +607,35 @@ class TreeView extends StatelessWidget {
     final confirm = await showShadDialog<bool>(
       context: context,
       builder: (context) => ShadDialog.alert(
+        actionsAxis: Axis.horizontal,
+        gap: 16,
+        useSafeArea: false,
         constraints: BoxConstraints(maxWidth: 400),
         radius: BorderRadius.all(Radius.circular(25.0)),
-        title: const Text('Delete Member'),
+        removeBorderRadiusWhenTiny: false,
+        title: Text(
+          'Delete Member',
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
         description: const Text(
           'Are you sure you want to delete this member? This action cannot be undone and will remove all relationships.',
         ),
         actions: [
-          ShadButton.outline(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(false),
+          Expanded(
+            child: ShadButton.destructive(
+              height: 50,
+              child: const Text('Delete'),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
           ),
-          ShadButton.destructive(
-            child: const Text('Delete'),
-            onPressed: () => Navigator.of(context).pop(true),
+          Expanded(
+            child: ShadButton.outline(
+              height: 50,
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
           ),
         ],
       ),
