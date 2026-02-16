@@ -17,6 +17,7 @@ class HomeLoaded extends HomeState {
   final int upcomingBirthdays;
   final List<FamilyTreeNode> recentMembers;
   final Map<DateTime, int> monthlyGrowth;
+  final List<FamilyTreeNode> upcomingBirthdayMembers;
 
   const HomeLoaded({
     required this.totalMembers,
@@ -24,6 +25,7 @@ class HomeLoaded extends HomeState {
     required this.upcomingBirthdays,
     required this.recentMembers,
     required this.monthlyGrowth,
+    required this.upcomingBirthdayMembers,
   });
 
   @override
@@ -33,6 +35,7 @@ class HomeLoaded extends HomeState {
     upcomingBirthdays,
     recentMembers,
     monthlyGrowth,
+    upcomingBirthdayMembers,
   ];
 }
 
